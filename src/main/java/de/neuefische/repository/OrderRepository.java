@@ -28,7 +28,7 @@ public class OrderRepository {
 
 	public Order updateOrderStatus(String id, OrderStatus orderStatus) {
 		Order order = getOrderById(id).orElseThrow(() -> new OrderNotFoundException("Order with id " + id + " not found"));
-		orderMap.put(id, new Order(order.id(), order.productIds(), orderStatus, order.orderDate()));
+		orderMap.put(id, order.withOrderStatus(orderStatus));
 		return order;
 	}
 

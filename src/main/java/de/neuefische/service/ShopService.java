@@ -16,7 +16,7 @@ public class ShopService {
 	private final IdService idService;
 	private final OrderRepository orderRepository;
 
-	public List<Order> listOrders() {
+	public List<Order> getAllOrders() {
 		return orderRepository.getAllOrders();
 	}
 
