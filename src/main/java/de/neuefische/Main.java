@@ -7,6 +7,9 @@ import de.neuefische.repository.ProductRepository;
 import de.neuefische.service.IdService;
 import de.neuefische.service.ShopService;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -16,7 +19,7 @@ public class Main {
 		IdService idService = new IdService();
 		ShopService shopService = new ShopService(productRepository, idService, orderRepository);
 
-		Order order = new Order(null, List.of("1", "2"), OrderStatus.PROCESSING, null);
+		/*Order order = new Order(null, List.of("1", "2"), OrderStatus.PROCESSING, null);
 		Order newOrder = shopService.addOrder(order);
 		System.out.println(newOrder);
 
@@ -28,6 +31,28 @@ public class Main {
 		Order newOrder3 = shopService.addOrder(order3);
 		System.out.println(newOrder3);
 
-		System.out.println(shopService.getOldestOrderPerStatus().values());
+		System.out.println(shopService.getOldestOrderPerStatus().values());*/
+		try {
+			Files.lines(Path.of("transactions.txt"))
+					.map(line -> line.split(" "))
+					.forEach(split -> {
+						String method = split[0];
+						if (method.equals("addOrder")) {
+							List<String> productIds = new ArrayList<>();
+							for (int i = 2; i < split.length; i++) {
+								productIds.add(split[i]);
+							}
+							shopService.addOrder(new Order(null, productIds, OrderStatus.PROCESSING, null));
+						} else if (method.equals("setStatus")) {
+							String id = split[1];
+							OrderStatus orderStatus = OrderStatus.valueOf(split[2]);
+							shopService.updateOrderStatus(id, orderStatus);
+						} else if (method.equals("printOrders")) {
+							System.out.println(shopService.getAllOrders());
+						}
+					});
+		} catch (Exception e) {
+			System.out.println("Error while reading file: " + e.getMessage());
+		}
 	}
 }

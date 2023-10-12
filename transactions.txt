@@ -1,0 +1,3 @@
+addOrder A 1 2 3
+addOrder B 4 1
+printOrders
