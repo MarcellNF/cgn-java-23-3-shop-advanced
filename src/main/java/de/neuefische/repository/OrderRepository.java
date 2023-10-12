@@ -3,15 +3,14 @@ package de.neuefische.repository;
 import de.neuefische.exception.OrderNotFoundException;
 import de.neuefische.model.Order;
 import de.neuefische.model.OrderStatus;
-import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 public class OrderRepository {
-	private final Map<String, Order> orderMap;
+	private final Map<String, Order> orderMap = new HashMap<>();
 
 	public List<Order> getAllOrders() {
 		return List.copyOf(orderMap.values());

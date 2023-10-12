@@ -8,7 +8,9 @@ import de.neuefische.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.time.ZonedDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class ShopService {
@@ -36,5 +38,21 @@ public class ShopService {
 
 	public void removeOrderById(String id) {
 		orderRepository.removeOrderById(id);
+	}
+
+	public Map<OrderStatus, Order> getOldestOrderPerStatus() {
+		Map<OrderStatus, Order> oldestOrdersPerStatus = new EnumMap<>(OrderStatus.class);
+		for (Order order : orderRepository.getAllOrders()) {
+			OrderStatus orderStatus = order.orderStatus();
+			if (!oldestOrdersPerStatus.containsKey(orderStatus)) {
+				oldestOrdersPerStatus.put(orderStatus, order);
+			} else {
+				Order oldestOrder = oldestOrdersPerStatus.get(orderStatus);
+				if (order.orderDate().isBefore(oldestOrder.orderDate())) {
+					oldestOrdersPerStatus.put(orderStatus, order);
+				}
+			}
+		}
+		return oldestOrdersPerStatus;
 	}
 }
