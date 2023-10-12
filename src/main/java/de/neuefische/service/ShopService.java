@@ -3,7 +3,6 @@ package de.neuefische.service;
 import de.neuefische.exception.ProductNotFoundException;
 import de.neuefische.model.Order;
 import de.neuefische.model.OrderStatus;
-import de.neuefische.model.Product;
 import de.neuefische.repository.OrderRepository;
 import de.neuefische.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +21,12 @@ public class ShopService {
 	}
 
 	public Order addOrder(Order order) {
-		for (Product product : order.products()) {
-			if (!productRepository.getProductById(product.id()).isPresent()) {
-				throw new ProductNotFoundException("Product with id " + product.id() + " not found");
+		for (String id : order.productIds()) {
+			if (!productRepository.getProductById(id).isPresent()) {
+				throw new ProductNotFoundException("Product with id " + id + " not found");
 			}
 		}
-
-		Order newOrder = new Order(idService.generateId(), order.products(), OrderStatus.PROCESSING, ZonedDateTime.now());
+		Order newOrder = new Order(idService.generateId(), order.productIds(), OrderStatus.PROCESSING, ZonedDateTime.now());
 		return orderRepository.saveOrder(newOrder);
 	}
 
